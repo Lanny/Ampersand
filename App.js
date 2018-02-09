@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
-import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from 'redux-saga'
 import { NativeModules, Platform, StyleSheet, Text, View } from 'react-native'
+import getConnection from './data-access/database'
 
 const { AmpHelpers } = NativeModules
-
-import reducers from './store/reducers'
-import sagas from './store/sagas'
 
 type Props = {}
 export default class App extends Component<Props> {
@@ -20,33 +15,24 @@ export default class App extends Component<Props> {
   }
 
   componentWillMount() {
-    const sagaMiddleware = createSagaMiddleware()
-    this.store = createStore(reducers, applyMiddleware(sagaMiddleware))
-    sagaMiddleware.run(sagas)
-
-    this.store.dispatch({
-      type: 'FETCH_AUTH_TOKEN',
-      instance: {
-        url: 'http://music.lannysport.net',
-        username: 'lanny',
-        password: '',
-        version: '350001'
-      }
+    getConnection().then(db => {
+      db.getSetting('instance').then(result => {
+        console.log(result)
+        debugger
+      })
     })
   }
 
   render() {
     return (
-      <Provider store={this.store}>
-        <View style={styles.container}>
-          <Text style={styles.welcome}>
-            Foobar
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit App.js
-          </Text>
-        </View>
-      </Provider>
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Foobar
+        </Text>
+        <Text style={styles.instructions}>
+          To get started, edit App.js
+        </Text>
+      </View>
     )
   }
 }

@@ -12,7 +12,7 @@ const AmpacheInstance = Record({
 const instanceInitialState = AmpacheInstance({
   url: 'http://music.lannysport.net',
   username: 'lanny',
-  password: '',
+  password: '2Salinas',
   version: '350001'
 })
 

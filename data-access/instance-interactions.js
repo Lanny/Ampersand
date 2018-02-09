@@ -1,8 +1,7 @@
-import { put, call, all, select, takeLatest } from 'redux-saga/effects'
 import { NativeModules } from 'react-native'
 import * as _ from 'lodash'
 
-import { appendQuery, parseXML } from '../data-access/utils.js'
+import { appendQuery, parseXML } from '.utils.js'
 
 function* ampCall(params, retry=true) {
   const instance = yield select(state => state.instance)
