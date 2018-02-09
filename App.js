@@ -12,7 +12,6 @@ import sagas from './store/sagas'
 type Props = {}
 export default class App extends Component<Props> {
   getDatPass() {
-    console.log(AmpHelpers)
     const result = AmpHelpers.getTokenParams('')
       .done(result => {
         console.log(result)

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "immutable": "^3.8.2",
+    "lodash": "^4.17.5",
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-xml2js": "^1.0.3",
