@@ -10,8 +10,7 @@ export default class ArtistList extends Component {
   componentWillMount() {
     this.setState({artists: []})
 
-    fetchArtists()
-      .then(() => getConnection())
+    getConnection()
       .then(db => db.executeSql('SELECT * FROM artists'))
       .then(([results]) => {
         this.setState({artists: results.rows.raw() })

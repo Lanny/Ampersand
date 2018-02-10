@@ -20,7 +20,7 @@ const schema = [
   `CREATE TABLE IF NOT EXISTS kv_store (
     key TEXT UNIQUE NOT NULL,
     value TEXT)`,
-  `CREATE TABLE artists (
+  `CREATE TABLE IF NOT EXISTS artists (
     ampache_id NUMBER NOT NULL,
     name STRING NOT NULL)`
 ]
@@ -54,6 +54,12 @@ class DBWrapper {
       })
   }
 
+  flush() {
+    return (Promise.all(antiSchema.map(sql => this.executeSql(sql)))
+      .then(() => Promise.all(schema.map(sql => this.executeSql(sql))))
+      .then(() => this.setSetting('instance', dummyInstance)))
+  }
+
   executeSql(...args) { return this.db.executeSql(...args) }
 }
 
@@ -68,8 +74,7 @@ function readyDB(db) {
   return new Promise((resolve, reject) => {
     const wdb = new DBWrapper(db)
 
-    Promise.all(antiSchema.map(sql => wdb.executeSql(sql)))
-      .then(() => Promise.all(schema.map(sql => wdb.executeSql(sql))))
+    Promise.all(schema.map(sql => wdb.executeSql(sql)))
       .then(() => wdb.setSetting('instance', dummyInstance))
       .then(() => {
         resolve(wdb)

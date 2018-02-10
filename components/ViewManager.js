@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import ArtistList from './ArtistList'
 import Settings from './Settings'
+import Processing from './Processing'
 import TabBar from './TabBar'
 
 class ViewManager extends Component {
@@ -13,6 +14,8 @@ class ViewManager extends Component {
         return <ArtistList />
       case 'SETTINGS':
         return <Settings />
+      case 'PROCESSING':
+        return <Processing />
       default:
         throw new Error(`Unrecognized view name: ${this.props.viewName}`)
     }
