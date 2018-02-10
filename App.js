@@ -1,24 +1,14 @@
 import React, { Component } from 'react'
 import { Platform, StyleSheet, Text, View } from 'react-native'
 
-import { fetchArtists } from './data-access/instance-interactions'
-
+import ArtistList from './components/ArtistList'
 
 type Props = {}
 export default class App extends Component<Props> {
-  componentWillMount() {
-    fetchArtists()
-  }
-
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Foobar
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
+        <ArtistList />
       </View>
     )
   }

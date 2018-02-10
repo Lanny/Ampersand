@@ -14,7 +14,6 @@ async function ampCall(params, retry=true) {
     { version: instance.version })
 
   const url = appendQuery(path, workingParams)
-  console.log(url)
   const serverResponse = await fetch(url)
   const xml = await serverResponse.text()
   const data = await parseXML(xml)
@@ -61,11 +60,15 @@ async function fetchAuthToken(instance) {
 }
 
 export async function fetchArtists(action) {
-  console.log('one')
+  const db = await getConnection()
   const response = await ampCall({
     action: 'artists',
     limit: 100
   })
 
-  console.log(response)
+  const promises = response.root.artist.map(artist =>
+    db.executeSql('INSERT INTO artists (ampache_id, name) VALUES (?,?)',
+                  [artist['$'].id, artist.name[0]]))
+
+  await Promise.all(promises)
 }
