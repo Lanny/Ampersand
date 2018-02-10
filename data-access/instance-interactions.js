@@ -4,6 +4,25 @@ import * as _ from 'lodash'
 import getConnection from './database'
 import { appendQuery, parseXML } from './utils.js'
 
+async function paginatedCall(params, dataCb) {
+  const perQuery = 1000
+  let totalCount = null
+  let loadedSoFar = 0
+
+  while (loadedSoFar < totalCount || totalCount === null) {
+    let workingParams = _.merge(
+      {},
+      params,
+      {limit: perQuery, offset: loadedSoFar})
+    let response = await ampCall(workingParams)
+
+    loadedSoFar += response.root.artist.length
+    totalCount = parseInt(response.root.total_count[0])
+
+    await dataCb(response)
+  }
+}
+
 async function ampCall(params, retry=true) {
   const db = await getConnection()
   const instance = await db.getSetting('instance')
@@ -61,25 +80,13 @@ async function fetchAuthToken(instance) {
 
 export async function fetchArtists(action) {
   const db = await getConnection()
-  const perQuery = 1000
-  let totalCount = null
-  let loadedSoFar = 0
-
-  while (loadedSoFar < totalCount || totalCount === null) {
-    let response = await ampCall({
-      action: 'artists',
-      limit: perQuery,
-      offset: loadedSoFar
-    })
-
-    loadedSoFar += response.root.artist.length
-    console.log(response)
-    totalCount = parseInt(response.root.total_count[0])
-
+  const dataCb = response => {
     const promises = response.root.artist.map(artist =>
       db.executeSql('INSERT INTO artists (ampache_id, name) VALUES (?,?)',
                     [artist['$'].id, artist.name[0]]))
 
-    await Promise.all(promises)
+    return Promise.all(promises)
   }
+
+  await paginatedCall({action: 'artists'}, dataCb)
 }
