@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Platform, StyleSheet, Text, View } from 'react-native'
 
 import ArtistList from './components/ArtistList'
+import TabBar from './components/TabBar'
 
 type Props = {}
 export default class App extends Component<Props> {
@@ -9,6 +10,7 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <ArtistList />
+        <TabBar />
       </View>
     )
   }
@@ -16,19 +18,9 @@ export default class App extends Component<Props> {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 20,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  }
 })

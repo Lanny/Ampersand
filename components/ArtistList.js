@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, SectionList, Header, ListItem } from 'react-native'
+import { Text, View, SectionList, Header, ListItem, StyleSheet } from 'react-native'
 
 
 import { fetchArtists } from '../data-access/instance-interactions'
@@ -20,15 +20,15 @@ export default class ArtistList extends Component {
 
   renderItem({ item }) {
     return (
-      <View key={ item.ampache_id }>
-        <Text>{ item.name }</Text>
+      <View style={styles.item}>
+        <Text style={styles.itemName}>{item.name}</Text>
       </View>
     )
   }
 
   renderSectionHeader({ section }) {
     return (
-      <View>
+      <View style={styles.heading}>
         <Text>{ section.title }</Text>
       </View>
     )
@@ -41,10 +41,34 @@ export default class ArtistList extends Component {
     }]
 
     return (
-      <SectionList
-        renderItem={this.renderItem}
-        renderSectionHeader={this.renderSectionHeader}
-        sections={sections} />
+      <View style={styles.container}>
+        <SectionList
+          renderItem={this.renderItem}
+          renderSectionHeader={this.renderSectionHeader}
+          sections={sections}
+          keyExtractor={(item, index) => index} />
+      </View>
     )
   }
+  
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  heading: {
+    backgroundColor: '#EFEFEF',
+    borderColor: '#AAA',
+    borderBottomWidth: 1,
+    paddingLeft: 15,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
+  item: {
+    backgroundColor: '#FFF',
+    padding: 15,
+    borderColor: '#AAA',
+    borderBottomWidth: 1
+  }
+})
