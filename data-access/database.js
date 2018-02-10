@@ -22,12 +22,25 @@ const schema = [
     value TEXT)`,
   `CREATE TABLE IF NOT EXISTS artists (
     ampache_id NUMBER NOT NULL,
-    name STRING NOT NULL)`
+    name STRING NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS albums (
+    ampache_id NUMBER NOT NULL,
+    name STRING NOT NULL,
+    artist_id NUMBER NOT NULL,
+    FOREIGN KEY(artist_id) REFERENCES artists(ampache_id))`,
+  `CREATE TABLE IF NOT EXISTS tracks (
+    ampache_id NUMBER NOT NULL,
+    track_number NUMBER,
+    name STRING NOT NULL,
+    album_id NUMBER NOT NULL,
+    FOREIGN KEY(album_id) REFERENCES albums(ampache_id))`,
 ]
 
 const antiSchema = [
   `DROP TABLE IF EXISTS kv_store`,
-  `DROP TABLE IF EXISTS artists`
+  `DROP TABLE IF EXISTS artists`,
+  `DROP TABLE IF EXISTS albums`,
+  `DROP TABLE IF EXISTS tracks`
 ]
 
 class DBWrapper {

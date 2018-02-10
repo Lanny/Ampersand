@@ -61,14 +61,25 @@ async function fetchAuthToken(instance) {
 
 export async function fetchArtists(action) {
   const db = await getConnection()
-  const response = await ampCall({
-    action: 'artists',
-    limit: 100
-  })
+  const perQuery = 1000
+  let totalCount = null
+  let loadedSoFar = 0
 
-  const promises = response.root.artist.map(artist =>
-    db.executeSql('INSERT INTO artists (ampache_id, name) VALUES (?,?)',
-                  [artist['$'].id, artist.name[0]]))
+  while (loadedSoFar < totalCount || totalCount === null) {
+    let response = await ampCall({
+      action: 'artists',
+      limit: perQuery,
+      offset: loadedSoFar
+    })
 
-  await Promise.all(promises)
+    loadedSoFar += response.root.artist.length
+    console.log(response)
+    totalCount = parseInt(response.root.total_count[0])
+
+    const promises = response.root.artist.map(artist =>
+      db.executeSql('INSERT INTO artists (ampache_id, name) VALUES (?,?)',
+                    [artist['$'].id, artist.name[0]]))
+
+    await Promise.all(promises)
+  }
 }
