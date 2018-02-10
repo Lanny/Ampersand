@@ -3,9 +3,8 @@ import { connect } from 'react-redux'
 import {
   Text,
   View,
-  SectionList,
   TouchableOpacity,
-  ListItem,
+  FlatList,
   StyleSheet
 } from 'react-native'
 
@@ -13,25 +12,28 @@ import { fetchArtists } from '../data-access/instance-interactions'
 import getConnection from '../data-access/database'
 import globalStyles from '../styles/globalStyles'
 
-class ArtistList extends Component {
+
+class AlbumsForArtist extends Component {
   componentWillMount() {
-    this.setState({artists: []})
+    this.setState({albums: []})
 
     getConnection()
-      .then(db => db.executeSql('SELECT * FROM artists'))
+      .then(db => db.executeSql(
+        'SELECT * FROM albums WHERE artist_id = ?', [this.props.artistId]))
       .then(([results]) => {
-        this.setState({artists: results.rows.raw() })
+        this.setState({albums: results.rows.raw() })
       })
   }
 
   renderItem({ item }) {
-    const goToArtist = this.props.setView.bind(
+    const goToAlbum = this.props.setView.bind(
       null,
-      'ALBUMS_FOR_ARTIST',
-      {artistId: item.ampache_id})
+      'TRACKS_FOR_ALBUM',
+      {albumId: item.ampache_id})
 
+    
     return (
-      <TouchableOpacity onPress={goToArtist}>
+      <TouchableOpacity onPress={goToAlbum}>
         <View style={globalStyles.listItem}>
           <Text>{item.name}</Text>
         </View>
@@ -39,27 +41,14 @@ class ArtistList extends Component {
     )
   }
 
-  renderSectionHeader({ section }) {
-    return (
-      <View style={globalStyles.sectionHeading}>
-        <Text>{section.title}</Text>
-      </View>
-    )
-  }
 
   render() {
-    const sections = [{
-      title: 'Artists',
-      data: this.state.artists
-    }]
-
     return (
       <View style={styles.container}>
-        <SectionList
+        <FlatList
           renderItem={this.renderItem.bind(this)}
-          renderSectionHeader={this.renderSectionHeader.bind(this)}
-          sections={sections}
-          keyExtractor={(item, index) => index} />
+          data={this.state.albums}
+          keyExtractor={(item, index) => `${index}`} />
       </View>
     )
   }
@@ -77,5 +66,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch({type: 'SET_VIEW', viewName, viewParams})
 })
 
-export default connect(null, mapDispatchToProps)(ArtistList)
+export default connect(null, mapDispatchToProps)(AlbumsForArtist)
+
 

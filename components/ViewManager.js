@@ -3,6 +3,8 @@ import { View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
 import ArtistList from './ArtistList'
+import AlbumsForArtist from './AlbumsForArtist'
+import TracksForAlbum from './TracksForAlbum'
 import Settings from './Settings'
 import Processing from './Processing'
 import TabBar from './TabBar'
@@ -16,6 +18,10 @@ class ViewManager extends Component {
         return <Settings />
       case 'PROCESSING':
         return <Processing />
+      case 'ALBUMS_FOR_ARTIST':
+        return <AlbumsForArtist {...this.props.viewParams} />
+      case 'TRACKS_FOR_ALBUM':
+        return <TracksForAlbum {...this.props.viewParams} />
       default:
         throw new Error(`Unrecognized view name: ${this.props.viewName}`)
     }
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFF',
   },
   activeView: {
     flex: 1
@@ -46,7 +52,8 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-  activeView: state.view.get('activeView')
+  activeView: state.view.get('activeView'),
+  viewParams: state.view.get('viewParams'),
 })
 
 export default connect(mapStateToProps)(ViewManager)

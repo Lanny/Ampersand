@@ -21,17 +21,19 @@ const schema = [
     key TEXT UNIQUE NOT NULL,
     value TEXT)`,
   `CREATE TABLE IF NOT EXISTS artists (
-    ampache_id NUMBER NOT NULL,
+    ampache_id NUMBER UNIQUE NOT NULL,
     name STRING NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS albums (
-    ampache_id NUMBER NOT NULL,
+    ampache_id NUMBER UNIQUE NOT NULL,
     name STRING NOT NULL,
     artist_id NUMBER NOT NULL,
+    year NUMBER,
     FOREIGN KEY(artist_id) REFERENCES artists(ampache_id))`,
   `CREATE TABLE IF NOT EXISTS tracks (
-    ampache_id NUMBER NOT NULL,
+    ampache_id NUMBER UNIQUE NOT NULL,
     track_number NUMBER,
     name STRING NOT NULL,
+    url STRING NOT NULL,
     album_id NUMBER NOT NULL,
     FOREIGN KEY(album_id) REFERENCES albums(ampache_id))`,
 ]
@@ -65,6 +67,49 @@ class DBWrapper {
           return this.db.executeSql(`INSERT INTO kv_store (VALUE, KEY) VALUES (?, ?)`, args)
         }
       })
+  }
+
+  insert(table, row) {
+    let colNames = []
+    let placeHolder = []
+    let values = []
+
+    for (let key in row) {
+      colNames.push(key)
+      placeHolder.push('?')
+      values.push(row[key])
+    }
+
+    colNames = colNames.join(', ')
+    placeHolder = placeHolder.join(', ')
+
+    const query = `INSERT INTO ${table} (${colNames}) VALUES (${placeHolder})`
+
+    return this.executeSql(query, values)
+  }
+
+  selectOne(table, where) {
+    return new Promise((resolve, reject) => {
+      const clauses = []
+      const args = []
+
+      for (let key in where) {
+        clauses.push(`${key} = ?`)
+        args.push(where[key])
+      }
+
+      const clauseStr = clauses.join(' AND ')
+      const query = `SELECT * FROM ${table} WHERE ${clauseStr}`
+
+      this.executeSql(query, args)
+        .then(([results]) => {
+          if (results.rows.length !== 1)
+            throw new Error(
+              `Unexpected number or results: ${results.rows.length}`)
+
+          resolve(results.rows.item(0))
+        })
+    })
   }
 
   flush() {
