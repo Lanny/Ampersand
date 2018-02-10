@@ -1,26 +1,39 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
-
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { connect } from 'react-redux'
 
 import { fetchArtists } from '../data-access/instance-interactions'
 import getConnection from '../data-access/database'
 
 class TabListItem extends Component {
+  activate() {
+    this.props.setView(this.props.viewId)
+  }
+
   render() {
+    const activate = this.activate.bind(this)
+
     return (
-      <View style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={activate}>
         <Text>{this.props.title}</Text>
-      </View>
+      </TouchableOpacity>
     )
   }
 }
 
-export default class TabList extends Component {
+const tabs = [
+  ['ARTISTS', 'Artists'],
+  ['SETTINGS', 'Settings']
+]
+
+class TabList extends Component {
   render() {
-    var items = [
-      <TabListItem title="Artists" key="1" />,
-      <TabListItem title="Settings" key="2" />,
-    ]
+    const items = tabs.map(([key, title]) => (
+        <TabListItem title={title}
+                     viewId={key}
+                     key={key}
+                     setView={this.props.setView} />
+      ))
 
     return (
       <View style={styles.tabList}>
@@ -47,3 +60,13 @@ const styles = StyleSheet.create({
   },
 
 })
+
+const mapStateToProps = state => ({
+  activeView: state.view.activeView
+})
+
+const mapDispatchToProps = dispatch => ({
+  setView: viewName => dispatch({type: 'SET_VIEW', viewName})
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabList)

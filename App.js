@@ -1,26 +1,20 @@
 import React, { Component } from 'react'
-import { Platform, StyleSheet, Text, View } from 'react-native'
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux'
 
-import ArtistList from './components/ArtistList'
-import TabBar from './components/TabBar'
+import reducers from './store/reducers'
+import ViewManager from './components/ViewManager'
 
-type Props = {}
-export default class App extends Component<Props> {
+export default class App extends Component {
+  componentWillMount() {
+    this.store = createStore(reducers)
+  }
+  
   render() {
     return (
-      <View style={styles.container}>
-        <ArtistList />
-        <TabBar />
-      </View>
+      <Provider store={this.store}>
+        <ViewManager />
+      </Provider>
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#F5FCFF',
-  }
-})
