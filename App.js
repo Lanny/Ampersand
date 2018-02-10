@@ -1,26 +1,13 @@
 import React, { Component } from 'react'
-import { NativeModules, Platform, StyleSheet, Text, View } from 'react-native'
-import getConnection from './data-access/database'
+import { Platform, StyleSheet, Text, View } from 'react-native'
 
-const { AmpHelpers } = NativeModules
+import { fetchArtists } from './data-access/instance-interactions'
+
 
 type Props = {}
 export default class App extends Component<Props> {
-  getDatPass() {
-    const result = AmpHelpers.getTokenParams('')
-      .done(result => {
-        console.log(result)
-        this.setState({data: result})
-      })
-  }
-
   componentWillMount() {
-    getConnection().then(db => {
-      db.getSetting('instance').then(result => {
-        console.log(result)
-        debugger
-      })
-    })
+    fetchArtists()
   }
 
   render() {

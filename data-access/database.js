@@ -12,7 +12,7 @@ function openCB() {
   console.log("Database OPENED")
 }
 
-SQLite.DEBUG(true);
+SQLite.DEBUG(false);
 SQLite.enablePromise(true);
 
 

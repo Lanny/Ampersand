@@ -1,10 +1,12 @@
 import { NativeModules } from 'react-native'
 import * as _ from 'lodash'
 
-import { appendQuery, parseXML } from '.utils.js'
+import getConnection from './database'
+import { appendQuery, parseXML } from './utils.js'
 
-function* ampCall(params, retry=true) {
-  const instance = yield select(state => state.instance)
+async function ampCall(params, retry=true) {
+  const db = await getConnection()
+  const instance = await db.getSetting('instance')
   const path = `${instance.url}/server/xml.server.php`
   const workingParams = _.merge(
     { auth: instance.token },
@@ -12,9 +14,10 @@ function* ampCall(params, retry=true) {
     { version: instance.version })
 
   const url = appendQuery(path, workingParams)
-  const serverResponse = yield call(fetch, url)
-  const xml = yield serverResponse.text()
-  const data = yield parseXML(xml)
+  console.log(url)
+  const serverResponse = await fetch(url)
+  const xml = await serverResponse.text()
+  const data = await parseXML(xml)
 
   if (!data.root)
     throw new Error('Unexpected response: \n' + xml)
@@ -32,47 +35,37 @@ function* ampCall(params, retry=true) {
     if (!retry)
       throw new Error('Unrecoverable auth error: \n' + xml)
 
-    const authToken = yield call(fetchAuthToken, instance)
-    return yield call(ampCall, params, false)
+    const authToken = await fetchAuthToken(instance)
+    return await ampCall(params, false)
   }
 
   return data
 }
 
-function* fetchAuthToken(instance) {
-  const [passphrase, timeStr] = yield call(NativeModules.AmpHelpers.getTokenParams,
-                                           instance.password)
+async function fetchAuthToken(instance) {
+  const db = await getConnection()
+  const [passphrase, timeStr] = await NativeModules.AmpHelpers.getTokenParams(
+    instance.password)
 
-  const response = yield ampCall({
+  const response = await ampCall({
     action: 'handshake',
     auth: passphrase,
     timestamp: timeStr,
     user: instance.username
   }, false)
 
-  const token = response.root.auth[0]
-
-  yield put({
-    type: 'UPDATE_INSTANCE',
-    data: {
-      token: token
-    }
-  })
+  instance.token = response.root.auth[0]
+  await db.setSetting('instance', instance)
 
   return instance
 }
 
-function* fetchArtists(action) {
-  const response = yield call(ampCall, {
+export async function fetchArtists(action) {
+  console.log('one')
+  const response = await ampCall({
     action: 'artists',
     limit: 100
   })
-}
 
-function* combinedSagas() {
-  yield all([
-    takeLatest('FETCH_AUTH_TOKEN', fetchArtists)
-  ])
+  console.log(response)
 }
-
-export default combinedSagas
