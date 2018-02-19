@@ -5,6 +5,7 @@ const VIEW_NAMES = new Set([
   'ARTISTS',
   'ALBUMS_FOR_ARTIST',
   'TRACKS_FOR_ALBUM',
+  'PLAYER',
   'SETTINGS',
   'PROCESSING'
 ])
@@ -31,7 +32,30 @@ function viewReducer(state=initialViewState, action) {
   }
 }
 
+const initialPlayerState = Map({
+  currentlyPlaying: null,
+  playbackState: 'STOPPED'
+})
+
+function playerReduver(state=initialPlayerState, action) {
+  switch (action.type) {
+    case 'SET_PLAYING_TRACK':
+      return state
+        .set('playbackState', 'PLAYING')
+        .set('currentplyPlaying', action.trackId)
+
+    case 'TOGGLE_PLAYBACK_STATE':
+      const newState = (state.get('playbackState') === 'PLAYING')?
+        'PAUSED' : 'PLAYING'
+      return state.set('playbackState', newState)
+
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
-  view: viewReducer
+  view: viewReducer,
+  player: playerReduver
 })
 

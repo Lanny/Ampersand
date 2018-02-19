@@ -7,7 +7,7 @@ import {
   fetchAlbums,
   fetchTracks,
   downloadTrack
-} from '..//data-access/instance-interactions'
+} from '../data-access/instance-interactions'
 
 function* flushAndReload(action) {
   const db = yield call(getConnection)
@@ -30,14 +30,24 @@ function* playTrack(action) {
     db.selectOne.bind(db),
     'tracks',
     {ampache_id: trackId})
-  const filePath = yield call(downloadTrack, trackId)
 
-  console.log(filePath)
+  let filePath
+  if (!trackData.cached_file || true) {
+    filePath = yield call(downloadTrack, trackId)
+    yield call(db.update.bind(db),
+               'tracks',
+               {ampache_id: trackId},
+               {cached_file: filePath})
+  } else {
+    filePath = trackData.cachedFile
+  }
+
+  yield put({ type: 'SET_VIEW', viewName: 'PLAYER' })
+
   const sound = new Sound(filePath, null, error => {
     if (error)
       console.log('UH OH', error)
 
-    console.log('duration in seconds: ' + sound.getDuration())
     sound.play()
   })
 

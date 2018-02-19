@@ -1,6 +1,7 @@
 import { NativeModules } from 'react-native'
 import * as _ from 'lodash'
 import RNFetchBlob from 'react-native-fetch-blob'
+import URL from 'url-parse'
 
 import getConnection from './database'
 import { appendQuery, parseXML } from './utils.js'
@@ -140,13 +141,35 @@ export async function fetchTracks() {
   await paginatedCall({action: 'songs'}, dataCb)
 }
 
+const defaultConfig = { fileCache: true, appendExt: 'mp3' }
+async function _fetchFile(url, config=defaultConfig, retry=true) {
+  // Update ssid param, we can make a lot of db calls in the time it takes to
+  // handle a 403
+  const db = await getConnection()
+  const instance = await db.getSetting('instance')
+  const purl = new URL(url, true)
+  purl.query.ssid = instance.token
+
+  const file = await RNFetchBlob
+    .config(config)
+    .fetch('GET', purl.toString())
+
+  const statusCode = file.respInfo.status
+  if (statusCode === 403 && retry) {
+    // 403, maybe we have a stale token. Try refreshing it
+    const authToken = await fetchAuthToken(instance)
+    return await _fetchFile(url, config, false)
+  } else if (statusCode !== 200) {
+    throw new Error(`Unexpected response code: ${statusCode}`)
+  } else {
+    return file
+  }
+}
+
 export async function downloadTrack(trackId) {
   const db = await getConnection()
   const trackData = await db.selectOne('tracks', {ampache_id: trackId})
-  
-  const file = await RNFetchBlob
-    .config({ fileCache: true, appendExt: 'mp3' })
-    .fetch('GET', trackData.url)
+  const file = await _fetchFile(trackData.url)
 
   return file.path()
 }

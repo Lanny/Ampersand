@@ -34,6 +34,7 @@ const schema = [
     track_number NUMBER,
     name STRING NOT NULL,
     url STRING NOT NULL,
+    cached_file STRING,
     album_id NUMBER NOT NULL,
     FOREIGN KEY(album_id) REFERENCES albums(ampache_id))`,
 ]
@@ -44,6 +45,20 @@ const antiSchema = [
   `DROP TABLE IF EXISTS albums`,
   `DROP TABLE IF EXISTS tracks`
 ]
+
+function formAssignOrCompClause(map) {
+  const clauses = []
+  const args = []
+
+  for (let key in map) {
+    clauses.push(`${key} = ?`)
+    args.push(map[key])
+  }
+
+  const clauseStr = clauses.join(' AND ')
+
+  return [clauseStr, args]
+}
 
 class DBWrapper {
   constructor(db) {
@@ -90,15 +105,7 @@ class DBWrapper {
 
   selectOne(table, where) {
     return new Promise((resolve, reject) => {
-      const clauses = []
-      const args = []
-
-      for (let key in where) {
-        clauses.push(`${key} = ?`)
-        args.push(where[key])
-      }
-
-      const clauseStr = clauses.join(' AND ')
+      const [clauseStr, args] = formAssignOrCompClause(where)
       const query = `SELECT * FROM ${table} WHERE ${clauseStr}`
 
       this.executeSql(query, args)
@@ -112,6 +119,14 @@ class DBWrapper {
     })
   }
 
+  update(table, set, where) {
+    const [setClause, setArgs] = formAssignOrCompClause(set)
+    const [whereClause, whereArgs] = formAssignOrCompClause(where)
+
+    const query = `UPDATE ${table} SET ${setClause} WHERE ${whereClause}`
+    return this.executeSql(query, setArgs.concat(whereArgs))
+  }
+
   flush() {
     return (Promise.all(antiSchema.map(sql => this.executeSql(sql)))
       .then(() => Promise.all(schema.map(sql => this.executeSql(sql))))
@@ -123,8 +138,8 @@ class DBWrapper {
 
 const dummyInstance = {
   url: 'http://music.lannysport.net',
-  username: 'lanny',
-  password: '',
+  username: 'TestUser',
+  password: 'TestUser\'s Password',
   version: '350001'
 }
 

@@ -36,7 +36,6 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* AmpersandTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AmpersandTests.m */; };
 		388472A3202CE79800799EBD /* AmpHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 388472A2202CE79800799EBD /* AmpHelpers.m */; };
-		3888B932202FA87400246AAA /* Atoll.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3888B931202FA87400246AAA /* Atoll.mp3 */; };
 		38FB94C0202CDB1500F5A0C7 /* AmpHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FB94BF202CDB1500F5A0C7 /* AmpHelpers.swift */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6BD6B13884D44EFB88B34750 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4D55C8A876A4326BD956176 /* libRNFetchBlob.a */; };
@@ -374,7 +373,6 @@
 		2D02E4901E0B4A5D006451C7 /* Ampersand-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ampersand-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		388472A2202CE79800799EBD /* AmpHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AmpHelpers.m; sourceTree = "<group>"; };
-		3888B931202FA87400246AAA /* Atoll.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = Atoll.mp3; path = ../Atoll.mp3; sourceTree = "<group>"; };
 		38FB94BE202CDB1400F5A0C7 /* Ampersand-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ampersand-Bridging-Header.h"; sourceTree = "<group>"; };
 		38FB94BF202CDB1500F5A0C7 /* AmpHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AmpHelpers.swift; path = Ampersand/AmpHelpers.swift; sourceTree = "<group>"; };
 		45B7555E4C444AF787E6FEFD /* SQLite.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SQLite.xcodeproj; path = "../node_modules/react-native-sqlite-storage/src/ios/SQLite.xcodeproj"; sourceTree = "<group>"; };
@@ -541,7 +539,6 @@
 				38FB94BF202CDB1500F5A0C7 /* AmpHelpers.swift */,
 				38FB94BE202CDB1400F5A0C7 /* Ampersand-Bridging-Header.h */,
 				388472A2202CE79800799EBD /* AmpHelpers.m */,
-				3888B931202FA87400246AAA /* Atoll.mp3 */,
 			);
 			name = Ampersand;
 			sourceTree = "<group>";
@@ -1187,7 +1184,6 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				3888B932202FA87400246AAA /* Atoll.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

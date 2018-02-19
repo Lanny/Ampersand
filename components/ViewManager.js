@@ -7,6 +7,7 @@ import AlbumsForArtist from './AlbumsForArtist'
 import TracksForAlbum from './TracksForAlbum'
 import Settings from './Settings'
 import Processing from './Processing'
+import PlayerUI from './PlayerUI/PlayerUI'
 import TabBar from './TabBar'
 
 class ViewManager extends Component {
@@ -18,6 +19,8 @@ class ViewManager extends Component {
         return <Settings />
       case 'PROCESSING':
         return <Processing />
+      case 'PLAYER':
+        return <PlayerUI />
       case 'ALBUMS_FOR_ARTIST':
         return <AlbumsForArtist {...this.props.viewParams} />
       case 'TRACKS_FOR_ALBUM':
